@@ -1,16 +1,18 @@
 package main
 
 import (
-    // "net/http"
-
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
-
 func main() {
-    router := gin.Default()
-    // router.GET("/", function)
+	router := gin.Default()
 
 
-    router.Run("localhost:8080")
+
+	// Auth
+	router.POST("/auth/signup", signup)
+	router.POST("/auth/login", login)
+
+	// Starting the Server
+	router.Run("localhost:8080")
 }
