@@ -29,36 +29,32 @@ func userCreate(c *gin.Context) {
 
 	var newUser User
 
-	// Call BindJSON to bind the received JSON to
-	// newUser.
+	// Call BindJSON to Bind the Received JSON to newUser.
 	if err := c.BindJSON(&newUser); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, "bad Input")
 		return
 	}
 
-	// Open up our database connection.
-	// I've set up a database on my local machine using phpmyadmin.
-	// The database is called testDb
-	//username:password@tcp(127.0.0.1:3306)/DBname
+	// Database Connection.
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/facebookdb")
 
-	// if there is an error opening the connection, handle it
+	// Error Opening The Connection
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// Defer Close Connection Till After Query Executing
 	defer db.Close()
-	// perform a db.Query insert
+
+	// Execute The Query
 	currentTime := time.Now()
 	insert, err := db.Query("INSERT INTO `user_info` VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?)", newUser.User_id, newUser.First_name, newUser.Last_name, newUser.Email, newUser.Phone, newUser.Gender, newUser.Dob, newUser.Profile_pic, newUser.Bio_text, newUser.Current_city, currentTime.Format("2006-01-02 15:04:05"), currentTime.Format("2006-01-02 15:04:05"))
 
-	// if there is an error inserting, handle it
+	// Error Inserting
 	if err != nil {
 		panic(err.Error())
 	}
-	// be careful deferring Queries if you are using transactions
+
 	defer insert.Close()
 
 	c.IndentedJSON(http.StatusCreated, newUser)
@@ -68,36 +64,32 @@ func userUpdate(c *gin.Context) {
 
 	var newUser User
 
-	// Call BindJSON to bind the received JSON to
-	// newUser.
+	// Call BindJSON to Bind the Received JSON to newUser.
 	if err := c.BindJSON(&newUser); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, "bad Input")
 		return
 	}
 
-	// Open up our database connection.
-	// I've set up a database on my local machine using phpmyadmin.
-	// The database is called testDb
-	//username:password@tcp(127.0.0.1:3306)/DBname
+	// Database Connection.
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/facebookdb")
 
-	// if there is an error opening the connection, handle it
+	// Error Opening The Connection
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// Defer Close Connection Till After Query Executing
 	defer db.Close()
-	// perform a db.Query insert
+
+	// Execute The Query
 	currentTime := time.Now()
 	insert, err := db.Query("UPDATE `user_info` SET `first_name`=?,`last_name`=?,`email`=?,`phone`=?,`gender`=?,`dob`=?,`profile_pic`=?,`bio_text`=?,`current_city`=?,`date_updated`=? WHERE `user_id`=?", newUser.First_name, newUser.Last_name, newUser.Email, newUser.Phone, newUser.Gender, newUser.Dob, newUser.Profile_pic, newUser.Bio_text, newUser.Current_city, currentTime.Format("2006-01-02 15:04:05"), newUser.User_id)
 
-	// if there is an error inserting, handle it
+	// Error Updating
 	if err != nil {
 		panic(err.Error())
 	}
-	// be careful deferring Queries if you are using transactions
+
 	defer insert.Close()
 
 	c.IndentedJSON(http.StatusCreated, newUser)
@@ -107,28 +99,25 @@ func userDelete(c *gin.Context) {
 
 	id := c.Param("id")
 
-	// Open up our database connection.
-	// I've set up a database on my local machine using phpmyadmin.
-	// The database is called testDb
-	//username:password@tcp(127.0.0.1:3306)/DBname
+	// Database Connection.
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/facebookdb")
 
-	// if there is an error opening the connection, handle it
+	// Error Opening The Connection
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// Defer Close Connection Till After Query Executing
 	defer db.Close()
-	// perform a db.Query delete
+
+	// Execute The Query
 	delete, err := db.Query("DELETE FROM user_info WHERE user_id=?", id)
 
-	// if there is an error inserting, handle it
+	// Error Deleting
 	if err != nil {
 		panic(err.Error())
 	}
-	// be careful deferring Queries if you are using transactions
+
 	defer delete.Close()
 
 	c.IndentedJSON(http.StatusOK, id)
@@ -138,27 +127,24 @@ func userRead(c *gin.Context) {
 
 	id := c.Param("id")
 
-	// Open up our database connection.
-	// I've set up a database on my local machine using phpmyadmin.
-	// The database is called testDb
-	//username:password@tcp(127.0.0.1:3306)/DBname
+	// Database Connection.
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/facebookdb")
 
-	// if there is an error opening the connection, handle it
+	// Error Opening The Connection
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// Defer Close Connection Till After Query Executing
 	defer db.Close()
 
 	var user User
 
-	// Execute the query
+	// Execute The Query
 	err = db.QueryRow("SELECT * FROM user_info WHERE user_id=?", id).Scan(&user.User_info_id, &user.User_id, &user.First_name, &user.Last_name, &user.Email, &user.Phone, &user.Gender, &user.Dob, &user.Profile_pic, &user.Bio_text, &user.Current_city, &user.Date_created, &user.Date_updated)
+
 	if err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+		panic(err.Error())
 	}
 
 	c.IndentedJSON(http.StatusOK, user)

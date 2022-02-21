@@ -30,36 +30,32 @@ func friendRequestCreate(c *gin.Context) {
 
 	var newfriendRequest FriendRequest
 
-	// Call BindJSON to bind the received JSON to
-	// newfriendRequest.
+	// Call BindJSON to Bind the Received JSON to newUser.
 	if err := c.BindJSON(&newfriendRequest); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, "bad Input")
 		return
 	}
 
-	// Open up our database connection.
-	// I've set up a database on my local machine using phpmyadmin.
-	// The database is called testDb
-	//username:password@tcp(127.0.0.1:3306)/DBname
+	// Database Connection.
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/facebookdb")
 
-	// if there is an error opening the connection, handle it
+	// Error Opening The Connection
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// Defer Close Connection Till After Query Executing
 	defer db.Close()
-	// perform a db.Query insert
+
+	// Execute The Query
 	currentTime := time.Now()
 	insert, err := db.Query("INSERT INTO friend_request VALUES (NULL,?,?,?,?,?)", newfriendRequest.Requester_id, newfriendRequest.Receiver_id, newfriendRequest.Status, currentTime.Format("2006-01-02 15:04:05"), currentTime.Format("2006-01-02 15:04:05"))
 
-	// if there is an error inserting, handle it
+	// Error Inserting
 	if err != nil {
 		panic(err.Error())
 	}
-	// be careful deferring Queries if you are using transactions
+
 	defer insert.Close()
 
 	c.IndentedJSON(http.StatusCreated, newfriendRequest)
@@ -69,36 +65,32 @@ func friendRequestUpdate(c *gin.Context) {
 
 	var newfriendRequest FriendRequest
 
-	// Call BindJSON to bind the received JSON to
-	// newfriendRequest.
+	// Call BindJSON to Bind the Received JSON to newUser.
 	if err := c.BindJSON(&newfriendRequest); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, "bad Input")
 		return
 	}
 
-	// Open up our database connection.
-	// I've set up a database on my local machine using phpmyadmin.
-	// The database is called testDb
-	//username:password@tcp(127.0.0.1:3306)/DBname
+	// Database Connection.
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/facebookdb")
 
-	// if there is an error opening the connection, handle it
+	// Error Opening The Connection
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// Defer Close Connection Till After Query Executing
 	defer db.Close()
-	// perform a db.Query insert
+
+	// Execute The Query
 	currentTime := time.Now()
 	insert, err := db.Query("UPDATE `friend_request` SET `status`=?`date_updated`=? WHERE requester_id=? AND receiver_id=?", newfriendRequest.Status, currentTime.Format("2006-01-02 15:04:05"), newfriendRequest.Requester_id, newfriendRequest.Receiver_id)
 
-	// if there is an error inserting, handle it
+	// Error Updating
 	if err != nil {
 		panic(err.Error())
 	}
-	// be careful deferring Queries if you are using transactions
+
 	defer insert.Close()
 
 	c.IndentedJSON(http.StatusCreated, newfriendRequest)
@@ -108,35 +100,31 @@ func friendRequestDelete(c *gin.Context) {
 
 	var newfriendRequest FriendRequest
 
-	// Call BindJSON to bind the received JSON to
-	// newfriendRequest.
+	// Call BindJSON to Bind the Received JSON to newUser.
 	if err := c.BindJSON(&newfriendRequest); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, "bad Input")
 		return
 	}
 
-	// Open up our database connection.
-	// I've set up a database on my local machine using phpmyadmin.
-	// The database is called testDb
-	//username:password@tcp(127.0.0.1:3306)/DBname
+	// Database Connection.
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/facebookdb")
 
-	// if there is an error opening the connection, handle it
+	// Error Opening The Connection
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// defer the close till after the main function has finished
-	// executing
+	// Defer Close Connection Till After Query Executing
 	defer db.Close()
-	// perform a db.Query delete
+
+	// Execute The Query
 	delete, err := db.Query("DELETE FROM friend_request WHERE requester_id=? AND receiver_id=?", newfriendRequest.Requester_id, newfriendRequest.Receiver_id)
 
-	// if there is an error inserting, handle it
+	// Error Deleting
 	if err != nil {
 		panic(err.Error())
 	}
-	// be careful deferring Queries if you are using transactions
+
 	defer delete.Close()
 
 	c.IndentedJSON(http.StatusOK, newfriendRequest)
